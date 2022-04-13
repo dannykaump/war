@@ -13,20 +13,26 @@
 img{
   display: block;
   margin: 0 auto;
+  max-width:75%;
 }
 
-main {
+main, section.scoreboard {
   display: flex;
   justify-content: space-around;
   width: 100%;
   max-width: 700px;
   margin: auto;
+  font-size: 1em;
 }
 
-main > section {
+main > section, section.scoreboard > h4 {
   width: 50%;
   display: block;
   margin: 0 auto;
+}
+
+#bot, #user {
+  font-size: 1em;
 }
 
 /******************************************
@@ -47,11 +53,14 @@ body {
 }
 
 h1 {
-  font-size: 3rem;
+  font-size: 2.5rem;
+  padding: none;
+  margin: 10px auto;
 }
 
-h4, h3, h2 {
+h4, h3, h2, aside {
   color: white;
+  margin: none auto;
 }
 
 strong {
@@ -77,4 +86,17 @@ button, input {
 
 img {
   max-width: 100%;
+}
+
+section.scoreboard {
+  margin-bottom: 10px;
+}
+
+#wins, #losses {
+  font-size: .8em;
+}
+
+aside{
+  margin-top: 10px;
+  font-weight: 600;
 }

@@ -11,6 +11,7 @@ const reload = document.querySelector('a')
 const button = document.querySelector('button')
 const winsDOM = document.querySelector('#wins')
 const lossesDOM = document.querySelector('#losses')
+const aside = document.querySelector('aside')
 
 let deckId = ''
 let score1 = 0
@@ -55,7 +56,7 @@ function drawTwo() {
       let botVal = convertToNum(data.cards[1].value)
       updateDOM(playerVal, botVal)
       countWinLoss(data.remaining, score1, score2)
-      updateScore()
+      updateScore(data)
     })
     .catch(err => {
       console.log(`error ${err}`)
@@ -123,11 +124,13 @@ const checkWinner = (num1, num2) => num1 > num2 ? localStorage.userName || 'Play
 function clear() {
   input.classList.add('hidden')
   main.classList.remove('hidden')
+  aside.classList.remove('hidden')
 }
 
-function updateScore() {
-  playerScore.innerHTML = `Score: <bong>${score1 * 2}</bong>`
-  botScore.innerHTML = `Score: <strong>${score2 * 2}</strong>`
+function updateScore(data) {
+  playerScore.innerHTML = `<bong>${score1 * 2}</bong>`
+  botScore.innerHTML = `<strong>${score2 * 2}</strong>`
+  aside.innerHTML = `Deck : ${data.remaining}`
 }
 
 function makeBlue() {
