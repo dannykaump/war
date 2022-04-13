@@ -99,4 +99,9 @@ section.scoreboard {
 aside{
   margin-top: 10px;
   font-weight: 600;
+  font-size: .9rem;
+}
+
+#botScore, #userScore {
+  font-size: .8rem;
 }
