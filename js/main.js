@@ -121,6 +121,7 @@ function convertToNum(val) {
       return Number(val)
   }
 }
+
 // determines round winner
 function checkRound(val1, val2) {
   if (val1 > val2) {
@@ -196,18 +197,18 @@ function showWins() {
 
 }
 
+// play again -- shuffle, reset score
 replayButton.addEventListener('click', replay)
 
 function replay() {
   score1 = 0
   score2 = 0
   shuffle()
-  setLocalStorage()
   main.classList.add('hidden')
   h3.innerHTML = ''
 }
 
-//quick styles
+// quick styles
 
 function hideButton() {
   replayButton.classList.remove('hidden')
