@@ -47,6 +47,8 @@ function setLocalStorage() {
 
 shuffle()
 setLocalStorage()
+winsDOM.innerHTML = `Wins: <bong>${localStorage.getItem('wins')}</bong>`
+lossesDOM.innerHTML = `Losses: <strong>${localStorage.getItem('losses')}</strong>`
 
 button.addEventListener('click', drawTwo)
 
@@ -161,8 +163,6 @@ function updateScore(data) {
   playerScore.innerHTML = `<bong>${score1 * 2}</bong>`
   botScore.innerHTML = `<strong>${score2 * 2}</strong>`
   aside.innerHTML = `Deck : ${data.remaining}`
-  winsDOM.innerHTML = `Wins: <bong>${localStorage.getItem('wins')}</bong>`
-  lossesDOM.innerHTML = `Losses: <strong>${localStorage.getItem('losses')}</strong>`
 }
 
 //quick styles
