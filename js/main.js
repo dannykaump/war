@@ -14,6 +14,10 @@ const winsDOM = document.querySelector('#wins')
 const lossesDOM = document.querySelector('#losses')
 const deck = document.querySelector('#deck')
 const scoreBoard = document.querySelector('.scoreboard')
+const player1 = document.querySelector('#player1')
+const player2 = document.querySelector('#player2')
+
+const delay = 120 // ms
 
 // GETS NEW DECK_ID
 function shuffle() {
@@ -47,13 +51,9 @@ function setLocalStorage() {
   localStorage.setItem('score2', 0)
 }
 
-function showWins() {
-  winsDOM.innerHTML = `Wins : <bong>${localStorage.getItem('wins')}</bong>`
-  lossesDOM.innerHTML = `Losses : <strong>${localStorage.getItem('losses')}</strong>`
-
-}
-
+//shuffle deck on page load
 shuffle()
+
 
 button.addEventListener('click', drawTwo)
 
@@ -70,8 +70,16 @@ function drawTwo() {
     .then(data => {
       clear()
       localStorage.setItem('remaining', data.remaining)
-      document.querySelector('#player1').src = data.cards[0].image
-      document.querySelector('#player2').src = data.cards[1].image
+      // if first draw, ignore timeout
+      if (localStorage.remaining === '50') {
+        player2.src = data.cards[1].image
+        player1.src = data.cards[0].image
+      } else {
+        player1.src = data.cards[0].image
+        setTimeout(function () {
+          player2.src = data.cards[1].image
+        }, delay);
+      }
       //assign values from drawn cards
       let playerVal = convertToNum(data.cards[0].value)
       let botVal = convertToNum(data.cards[1].value)
@@ -89,6 +97,14 @@ function clear() {
   input.classList.add('hidden')
   deck.classList.remove('hidden')
   main.classList.remove('hidden')
+  saveName()
+}
+
+function saveName() {
+  if (localStorage.getItem('userName') === null || localStorage.getItem('userName') === '') {
+    localStorage.setItem('userName', input.value) // save username
+  }
+  playerName.innerHTML = localStorage.getItem('userName') || 'Player 1'
 }
 
 function convertToNum(val) {
@@ -107,10 +123,6 @@ function convertToNum(val) {
 }
 // determines round winner
 function checkRound(val1, val2) {
-  if (localStorage.getItem('userName') === null || localStorage.getItem('userName') === '') {
-    localStorage.setItem('userName', input.value) // save username
-  }
-  playerName.innerHTML = localStorage.getItem('userName') || 'Player 1'
   if (val1 > val2) {
     roundWon()
   } else if (val1 < val2) {
@@ -170,10 +182,18 @@ function gameLoss() {
 }
 
 function updateScore() {
-  playerScore.innerHTML = `<bong>${Number(localStorage.score1) * 2}</bong>`
-  botScore.innerHTML = `<strong>${Number(localStorage.score2) * 2}</strong>`
   deck.innerHTML = `Deck : ${localStorage.remaining}`
+  setTimeout(function () {
+    playerScore.innerHTML = `<bong>${Number(localStorage.score1) * 2}</bong>`
+    botScore.innerHTML = `<strong>${Number(localStorage.score2) * 2}</strong>`
+  }, delay);
   showWins()
+}
+
+function showWins() {
+  winsDOM.innerHTML = `Wins : <bong>${localStorage.getItem('wins')}</bong>`
+  lossesDOM.innerHTML = `Losses : <strong>${localStorage.getItem('losses')}</strong>`
+
 }
 
 replayButton.addEventListener('click', replay)
