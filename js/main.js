@@ -138,7 +138,7 @@ function checkWinner(remaining, val1, val2) {
       shuffle()
     }
   }
-  updateScore()
+  updateScore(remaining)
 }
 
 function gameWin() {
@@ -159,10 +159,10 @@ function gameLoss() {
   hideButton()
 }
 
-function updateScore(data) {
+function updateScore(remainingCards) {
   playerScore.innerHTML = `<bong>${score1 * 2}</bong>`
   botScore.innerHTML = `<strong>${score2 * 2}</strong>`
-  aside.innerHTML = `Deck : ${data.remaining}`
+  aside.innerHTML = `Deck : ${remainingCards}`
 }
 
 //quick styles
