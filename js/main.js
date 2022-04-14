@@ -45,10 +45,15 @@ function setLocalStorage() {
   }
 }
 
+function showWins() {
+  winsDOM.innerHTML = `Wins: <bong>${localStorage.getItem('wins')}</bong>`
+  lossesDOM.innerHTML = `Losses: <strong>${localStorage.getItem('losses')}</strong>`
+
+}
+
 shuffle()
 setLocalStorage()
-winsDOM.innerHTML = `Wins: <bong>${localStorage.getItem('wins')}</bong>`
-lossesDOM.innerHTML = `Losses: <strong>${localStorage.getItem('losses')}</strong>`
+showWins()
 
 button.addEventListener('click', drawTwo)
 
@@ -163,6 +168,7 @@ function updateScore(remainingCards) {
   playerScore.innerHTML = `<bong>${score1 * 2}</bong>`
   botScore.innerHTML = `<strong>${score2 * 2}</strong>`
   aside.innerHTML = `Deck : ${remainingCards}`
+  showWins()
 }
 
 //quick styles
