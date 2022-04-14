@@ -46,37 +46,29 @@ addEventListener('keyup', function onEvent(e) {
 function drawTwo() {
   const url = `https://www.deckofcardsapi.com/api/deck/${deckId}/draw/?count=2`
   fetch(url)
-  .then(res => res.json()) // parse response as JSON
-  .then(data => {
-    console.log(data)
-    clear()
-    document.querySelector('#player1').src = data.cards[0].image
-    document.querySelector('#player2').src = data.cards[1].image
-    let playerVal = convertToNum(data.cards[0].value)
-    let botVal = convertToNum(data.cards[1].value)
-    updateDOM(playerVal, botVal)
-    countWinLoss(data.remaining, score1, score2)
-    updateScore(data)
-  })
-  .catch(err => {
-    console.log(`error ${err}`)
-  });
+    .then(res => res.json()) // parse response as JSON
+    .then(data => {
+      console.log(data)
+      clear()
+      document.querySelector('#player1').src = data.cards[0].image
+      document.querySelector('#player2').src = data.cards[1].image
+      let playerVal = convertToNum(data.cards[0].value)
+      let botVal = convertToNum(data.cards[1].value)
+      updateDOM(playerVal, botVal)
+      countWinLoss(data.remaining, score1, score2)
+      updateScore(data)
+    })
+    .catch(err => {
+      console.log(`error ${err}`)
+    });
 }
-
+// determines game winner & tracks games won/lost
 function countWinLoss(remaining, val1, val2) {
   if (remaining === 0) {
     if (val1 > val2) {
-      let winCount = localStorage.getItem('wins')
-      winCount++
-      localStorage.setItem('wins', winCount)
-      h3.innerHTML = `Game Over! <bong>${localStorage.userName}</bong> Wins!`
-      makeBlue()
+      userWin()
     } else if (val1 < val2) {
-      let lossCount = localStorage.getItem('losses')
-      lossCount++
-      localStorage.setItem('losses', lossCount)
-      h3.innerHTML = `Game Over! <bong>Player 2</bong> Wins!`
-      makeRed()
+      userLoss()
     } else {
       h3.innerHTML = `Tie! Shuffling Cards`
       shuffle()
@@ -86,22 +78,46 @@ function countWinLoss(remaining, val1, val2) {
   }
 }
 
+function userWin() {
+  let winCount = localStorage.getItem('wins')
+  winCount++
+  localStorage.setItem('wins', winCount)
+  h3.innerHTML = `Game Over! <bong>${localStorage.userName}</bong> Wins!`
+  makeBlue()
+}
+
+function userLoss() {
+  let lossCount = localStorage.getItem('losses')
+  lossCount++
+  localStorage.setItem('losses', lossCount)
+  h3.innerHTML = `Game Over! <bong>Player 2</bong> Wins!`
+  makeRed()
+}
+// determines round winner & tracks score
 function updateDOM(val1, val2) {
   if (localStorage.getItem('userName') === null || localStorage.getItem('userName') === '') {
     localStorage.setItem('userName', input.value)
   }
   playerName.innerHTML = localStorage.getItem('userName') || 'Player 1'
   if (val1 > val2) {
-    makeBlue()
-    h3.innerHTML = `<bong>${localStorage.userName || 'Player 1'}</bong> Wins Round`
-    score1++
+    roundWon()
   } else if (val1 < val2) {
-    makeRed()
-    h3.innerHTML = '<strong>Player 2</strong> Wins Round'
-    score2++
+    roundLost()
   } else {
     h3.innerHTML = 'Time for <strong>War!</strong>'
   }
+}
+
+function roundWon() {
+  makeBlue()
+  h3.innerHTML = `<bong>${localStorage.userName || 'Player 1'}</bong> Wins Round`
+  score1++
+}
+
+function roundLost() {
+  makeRed()
+  h3.innerHTML = '<strong>Player 2</strong> Wins Round'
+  score2++
 }
 
 function convertToNum(val) {
