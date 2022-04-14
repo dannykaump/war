@@ -8,24 +8,24 @@ const botScore = document.querySelector('#botScore')
 const input = document.querySelector('input')
 const playerName = document.querySelector('#user')
 const botName = document.querySelector('#bot')
-const reload = document.querySelector('a')
+const replayButton = document.querySelector('a')
 const button = document.querySelector('button')
 const winsDOM = document.querySelector('#wins')
 const lossesDOM = document.querySelector('#losses')
-const aside = document.querySelector('aside')
-// make these localStorage
-let deckId = ''
-let score1 = 0
-let score2 = 0
+const deck = document.querySelector('#deck')
+const scoreBoard = document.querySelector('.scoreboard')
 
 // GETS NEW DECK_ID
 function shuffle() {
   showButton()
+  setLocalStorage()
   fetch('https://www.deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1')
     .then(res => res.json()) // parse response as JSON
     .then(data => {
       console.log(data)
-      deckId = data.deck_id
+      localStorage.setItem('deckId', data.deck_id)
+      localStorage.setItem('remaining', data.remaining)
+      updateScore()
     })
     .catch(err => {
       console.log(`error ${err}`)
@@ -43,17 +43,17 @@ function setLocalStorage() {
   if (localStorage.getItem('userName')) {
     input.classList.add('hidden')
   }
+  localStorage.setItem('score1', 0)
+  localStorage.setItem('score2', 0)
 }
 
 function showWins() {
-  winsDOM.innerHTML = `Wins: <bong>${localStorage.getItem('wins')}</bong>`
-  lossesDOM.innerHTML = `Losses: <strong>${localStorage.getItem('losses')}</strong>`
+  winsDOM.innerHTML = `Wins : <bong>${localStorage.getItem('wins')}</bong>`
+  lossesDOM.innerHTML = `Losses : <strong>${localStorage.getItem('losses')}</strong>`
 
 }
 
 shuffle()
-setLocalStorage()
-showWins()
 
 button.addEventListener('click', drawTwo)
 
@@ -64,11 +64,12 @@ addEventListener('keyup', function onEvent(e) {
 });
 // DRAW 2 CARDS FOM DECK W/ DECK_ID
 function drawTwo() {
-  const url = `https://www.deckofcardsapi.com/api/deck/${deckId}/draw/?count=2`
+  const url = `https://www.deckofcardsapi.com/api/deck/${localStorage.deckId}/draw/?count=2`
   fetch(url)
     .then(res => res.json()) // parse response as JSON
     .then(data => {
       clear()
+      localStorage.setItem('remaining', data.remaining)
       document.querySelector('#player1').src = data.cards[0].image
       document.querySelector('#player2').src = data.cards[1].image
       //assign values from drawn cards
@@ -77,7 +78,7 @@ function drawTwo() {
       //check for winner of each round
       checkRound(playerVal, botVal)
       // check for overall rounds won when deck is empty
-      checkWinner(data.remaining, score1, score2)
+      checkWinner(Number(localStorage.score1), Number(localStorage.score2))
     })
     .catch(err => {
       console.log(`error ${err}`)
@@ -86,7 +87,7 @@ function drawTwo() {
 
 function clear() {
   input.classList.add('hidden')
-  aside.classList.remove('hidden')
+  deck.classList.remove('hidden')
   main.classList.remove('hidden')
 }
 
@@ -107,7 +108,7 @@ function convertToNum(val) {
 // determines round winner
 function checkRound(val1, val2) {
   if (localStorage.getItem('userName') === null || localStorage.getItem('userName') === '') {
-    localStorage.setItem('userName', input.value)
+    localStorage.setItem('userName', input.value) // save username
   }
   playerName.innerHTML = localStorage.getItem('userName') || 'Player 1'
   if (val1 > val2) {
@@ -122,18 +123,22 @@ function checkRound(val1, val2) {
 function roundWon() {
   makeBlue()
   h3.innerHTML = `<bong>${localStorage.userName || 'Player 1'}</bong> Wins Round`
+  let score1 = localStorage.getItem('score1')
   score1++
+  localStorage.setItem('score1', score1)
 }
 
 function roundLost() {
   makeRed()
   h3.innerHTML = '<strong>Player 2</strong> Wins Round'
+  let score2 = localStorage.getItem('score2')
   score2++
+  localStorage.setItem('score2', score2)
 }
 
 // determines game winner & updates score
-function checkWinner(remaining, val1, val2) {
-  if (remaining === 0) {
+function checkWinner(val1, val2) {
+  if (Number(localStorage.remaining) === 0) {
     if (val1 > val2) {
       gameWin()
     } else if (val1 < val2) {
@@ -143,14 +148,14 @@ function checkWinner(remaining, val1, val2) {
       shuffle()
     }
   }
-  updateScore(remaining)
+  updateScore()
 }
 
 function gameWin() {
   let winCount = localStorage.getItem('wins')
   winCount++
   localStorage.setItem('wins', winCount)
-  h3.innerHTML = `Game Over! <bong>${localStorage.userName}</bong> Wins!`
+  h3.innerHTML = `Game over! <bong>${localStorage.userName}</bong> wins!`
   makeBlue()
   hideButton()
 }
@@ -159,27 +164,38 @@ function gameLoss() {
   let lossCount = localStorage.getItem('losses')
   lossCount++
   localStorage.setItem('losses', lossCount)
-  h3.innerHTML = `Game Over! <bong>Player 2</bong> Wins!`
+  h3.innerHTML = `Game over! <bong>Player 2</bong> wins!`
   makeRed()
   hideButton()
 }
 
-function updateScore(remainingCards) {
-  playerScore.innerHTML = `<bong>${score1 * 2}</bong>`
-  botScore.innerHTML = `<strong>${score2 * 2}</strong>`
-  aside.innerHTML = `Deck : ${remainingCards}`
+function updateScore() {
+  playerScore.innerHTML = `<bong>${Number(localStorage.score1) * 2}</bong>`
+  botScore.innerHTML = `<strong>${Number(localStorage.score2) * 2}</strong>`
+  deck.innerHTML = `Deck : ${localStorage.remaining}`
   showWins()
+}
+
+replayButton.addEventListener('click', replay)
+
+function replay() {
+  score1 = 0
+  score2 = 0
+  shuffle()
+  setLocalStorage()
+  main.classList.add('hidden')
+  h3.innerHTML = ''
 }
 
 //quick styles
 
 function hideButton() {
-  reload.classList.remove('hidden')
+  replayButton.classList.remove('hidden')
   button.classList.add('hidden')
 }
 
 function showButton() {
-  reload.classList.add('hidden')
+  replayButton.classList.add('hidden')
   button.classList.remove('hidden')
 }
 
