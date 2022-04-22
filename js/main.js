@@ -17,7 +17,7 @@ const scoreBoard = document.querySelector('.scoreboard')
 const player1 = document.querySelector('#player1')
 const player2 = document.querySelector('#player2')
 
-const delay = 120 // ms
+const delay = 50 // ms
 
 // GETS NEW DECK_ID
 function shuffle() {
